@@ -1,5 +1,5 @@
 # train MCTformerV2 on aug train set
-python main.py --model deit_small_MCTformerV2_patch16_224 \
+python3 main.py --model deit_small_MCTformerV2_patch16_224 \
     --batch-size 64 \
     --data-set VOC12 \
     --img-list datasets/voc12 \
@@ -9,7 +9,7 @@ python main.py --model deit_small_MCTformerV2_patch16_224 \
     --finetune https://dl.fbaipublicfiles.com/deit/deit_small_patch16_224-cd65a155.pth # change to our pretrained deit 
 
 # generate class-specific localization maps on aug train set
-python main.py --model deit_small_MCTformerV2_patch16_224 \
+python3 main.py --model deit_small_MCTformerV2_patch16_224 \
     --data-set VOC12MS \
     --scales 1.0 \
     --img-list datasets/voc12 \
@@ -26,7 +26,7 @@ python main.py --model deit_small_MCTformerV2_patch16_224 \
     --out-crf results/voc12/MCTformer_v2/attn-patchrefine-npy-crf 
 
 # evaluate the generated class-specific localization maps on train set
-python evaluation.py --list datasets/voc12/train_id.txt \
+python3 evaluation.py --list datasets/voc12/train_id.txt \
     --gt_dir datasets/voc12/VOCdevkit/VOC2012/SegmentationClassAug \
     --logfile results/voc12/MCTformer_v2/attn-patchrefine-npy/eval_log_train.txt \
     --type npy \
@@ -35,7 +35,7 @@ python evaluation.py --list datasets/voc12/train_id.txt \
     --comment "voc12_train_1464"
 
 # evaluate the generated class-specific localization maps on aug train set
-python evaluation.py --list datasets/voc12/train_aug_id.txt \
+python3 evaluation.py --list datasets/voc12/train_aug_id.txt \
     --gt_dir datasets/voc12/VOCdevkit/VOC2012/SegmentationClassAug \
     --logfile results/voc12/MCTformer_v2/attn-patchrefine-npy/eval_log_train_aug.txt \
     --type npy \
@@ -44,7 +44,7 @@ python evaluation.py --list datasets/voc12/train_aug_id.txt \
     --comment "voc12_aug_train_10582"
 
 # train AffinityNet on aug train set
-python psa/train_aff.py --weights models/res38/res38_cls.pth \
+python3 psa/train_aff.py --weights models/res38/res38_cls.pth \
     --voc12_root datasets/voc12/VOCdevkit/VOC2012/ \
     --train_list datasets/voc12/train_aug_id.txt \
     --save_path models/voc12/MCTformer_v2/aff \
@@ -53,14 +53,14 @@ python psa/train_aff.py --weights models/res38/res38_cls.pth \
 
 
 # get final pseudo pixel labels on aug train set
-python psa/infer_aff.py --weights models/voc12/MCTformer_v2/aff/resnet38_aff.pth \
+python3 psa/infer_aff.py --weights models/voc12/MCTformer_v2/aff/resnet38_aff.pth \
     --infer_list datasets/voc12/train_aug_id.txt \
     --cam_dir results/voc12/MCTformer_v2/attn-patchrefine-npy \
     --voc12_root datasets/voc12/VOCdevkit/VOC2012/ \
     --out_rw results/voc12/MCTformer_v2/pgt-psa-rw 
 
 # evaluate the final pseudo pixel labels on train set
-python evaluation.py --list datasets/voc12/train_id.txt \
+python3 evaluation.py --list datasets/voc12/train_id.txt \
     --gt_dir datasets/voc12/VOCdevkit/VOC2012/SegmentationClassAug \
     --logfile results/voc12/MCTformer_v2/pgt-psa-rw/eval_log_train.txt \
     --type png \
@@ -68,7 +68,7 @@ python evaluation.py --list datasets/voc12/train_id.txt \
     --comment "voc12_train_1464"
 
 # evaluate the final pseudo pixel labels on aug train set
-python evaluation.py --list datasets/voc12/train_aug_id.txt \
+python3 evaluation.py --list datasets/voc12/train_aug_id.txt \
     --gt_dir datasets/voc12/VOCdevkit/VOC2012/SegmentationClassAug \
     --logfile results/voc12/MCTformer_v2/pgt-psa-rw/eval_log_train_aug.txt \
     --type png \
@@ -76,7 +76,7 @@ python evaluation.py --list datasets/voc12/train_aug_id.txt \
     --comment "voc12_aug_train_10582"
 
 # train seg network on aug train set
-python seg/train_seg.py --network resnet38_seg \
+python3 seg/train_seg.py --network resnet38_seg \
     --num_epochs 30 \
     --seg_pgt_path results/voc12/MCTformer_v2/pgt-psa-rw \
     --init_weights models/res38/res38_cls.pth\
@@ -87,7 +87,7 @@ python seg/train_seg.py --network resnet38_seg \
     --batch_size 4
 
 # evaluate seg network without post-processing
-python seg/infer_seg.py --weights models/voc12/MCTformer_v2/seg/resnet38_seg.pth \
+python3 seg/infer_seg.py --weights models/voc12/MCTformer_v2/seg/resnet38_seg.pth \
     --network resnet38_seg \
     --list_path datasets/voc12/val_id.txt \
     --gt_path datasets/voc12/VOCdevkit/VOC2012/SegmentationClassAug \
@@ -97,7 +97,7 @@ python seg/infer_seg.py --weights models/voc12/MCTformer_v2/seg/resnet38_seg.pth
     --scales 1.0
 
 # evaluate seg network with crf post-processing
-python seg/infer_seg.py --weights models/voc12/MCTformer_v2/seg/resnet38_seg.pth \
+python3 seg/infer_seg.py --weights models/voc12/MCTformer_v2/seg/resnet38_seg.pth \
     --network resnet38_seg \
     --list_path datasets/voc12/val_id.txt \
     --gt_path datasets/voc12/VOCdevkit/VOC2012/SegmentationClassAug \

@@ -1,5 +1,5 @@
 # train MCTformerV2 on train set
-python main.py --model deit_small_MCTformerV2_patch16_224 \
+python3 main.py --model deit_small_MCTformerV2_patch16_224 \
     --batch-size 64 \
     --data-set COCO \
     --img-list datasets/coco \
@@ -9,7 +9,7 @@ python main.py --model deit_small_MCTformerV2_patch16_224 \
     --finetune https://dl.fbaipublicfiles.com/deit/deit_small_patch16_224-cd65a155.pth
 
 # generate class-specific localization maps on train set
-python main.py --model deit_small_MCTformerV2_patch16_224 \
+python3 main.py --model deit_small_MCTformerV2_patch16_224 \
     --data-set COCOMS \
     --scales 1.0 \
     --img-list datasets/coco \
@@ -26,7 +26,7 @@ python main.py --model deit_small_MCTformerV2_patch16_224 \
     --out-crf results/coco/MCTformer_v2/attn-patchrefine-npy-crf
 
 # evaluate the generated class-specific localization maps on train set
-python evaluation.py --list datasets/coco/train_id.txt \
+python3 evaluation.py --list datasets/coco/train_id.txt \
     --gt_dir datasets/coco/SegmentationClass \
     --logfile results/coco/MCTformer_v2/attn-patchrefine-npy/eval_log_train.txt \
     --type npy \
@@ -35,7 +35,7 @@ python evaluation.py --list datasets/coco/train_id.txt \
     --comment "coco_train_82081"
 
 # train AffinityNet on train set
-python psa/train_aff.py --weights models/res38/res38_cls.pth \
+python3 psa/train_aff.py --weights models/res38/res38_cls.pth \
     --voc12_root datasets/coco \
     --train_list datasets/coco/train_id.txt \
     --save_path models/coco/MCTformer_v2/aff \
@@ -43,14 +43,14 @@ python psa/train_aff.py --weights models/res38/res38_cls.pth \
     --ha_crf_dir results/coco/MCTformer_v2/attn-patchrefine-npy-crf_12 
 
 # get final pseudo pixel labels on train set
-python psa/infer_aff.py --weights models/coco/MCTformer_v2/aff/resnet38_aff.pth \
+python3 psa/infer_aff.py --weights models/coco/MCTformer_v2/aff/resnet38_aff.pth \
     --infer_list datasets/coco/train_id.txt \
     --cam_dir results/coco/MCTformer_v2/attn-patchrefine-npy \
     --voc12_root datasets/coco \
     --out_rw results/coco/MCTformer_v2/pgt-psa-rw 
 
 # evaluate the final pseudo pixel labels on train set
-python evaluation.py --list datasets/coco/train_id.txt \
+python3 evaluation.py --list datasets/coco/train_id.txt \
     --gt_dir datasets/coco/SegmentationClass \
     --logfile results/coco/MCTformer_v2/pgt-psa-rw/eval_log_train.txt \
     --type png \
@@ -58,7 +58,7 @@ python evaluation.py --list datasets/coco/train_id.txt \
     --comment "coco_train_82081"
 
 # train seg network on aug train set
-python seg/train_seg.py --network resnet38_seg \
+python3 seg/train_seg.py --network resnet38_seg \
     --num_epochs 30 \
     --seg_pgt_path results/coco/MCTformer_v2/pgt-psa-rw \
     --init_weights models/res38/res38_cls.pth\
@@ -69,7 +69,7 @@ python seg/train_seg.py --network resnet38_seg \
     --batch_size 4
 
 # evaluate seg network without post-processing
-python seg/infer_seg.py --weights models/coco/MCTformer_v2/seg/resnet38_seg.pth \
+python3 seg/infer_seg.py --weights models/coco/MCTformer_v2/seg/resnet38_seg.pth \
     --network resnet38_seg \
     --list_path datasets/coco/val_id.txt \
     --gt_path datasets/coco/SegmentationClass \
@@ -79,7 +79,7 @@ python seg/infer_seg.py --weights models/coco/MCTformer_v2/seg/resnet38_seg.pth 
     --scales 1.0
 
 # evaluate seg network with crf post-processing
-python seg/infer_seg.py --weights models/coco/MCTformer_v2/seg/resnet38_seg.pth \
+python3 seg/infer_seg.py --weights models/coco/MCTformer_v2/seg/resnet38_seg.pth \
     --network resnet38_seg \
     --list_path datasets/coco/val_id.txt \
     --gt_path datasets/coco/SegmentationClass \
