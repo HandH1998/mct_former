@@ -43,10 +43,7 @@ class COCOClsDataset(Dataset):
 
     def __getitem__(self, idx):
         name = self.img_name_list[idx]
-        if self.train or self.gen_attn :
-            img = PIL.Image.open(os.path.join(self.coco_root, 'train2014', name + '.jpg')).convert("RGB")
-        else:
-            img = PIL.Image.open(os.path.join(self.coco_root, 'val2014', name + '.jpg')).convert("RGB")
+        img = PIL.Image.open(os.path.join(self.coco_root, 'JPEGImages', name + '.jpg')).convert("RGB")
         label = torch.from_numpy(self.label_list[idx])
         if self.transform:
             img = self.transform(img)
@@ -70,10 +67,7 @@ class COCOClsDatasetMS(Dataset):
 
     def __getitem__(self, idx):
         name = self.img_name_list[idx]
-        if self.train or self.gen_attn:
-            img = PIL.Image.open(os.path.join(self.coco_root, 'train2014', name + '.jpg')).convert("RGB")
-        else:
-            img = PIL.Image.open(os.path.join(self.coco_root, 'val2014', name + '.jpg')).convert("RGB")
+        img = PIL.Image.open(os.path.join(self.coco_root, 'JPEGImages', name + '.jpg')).convert("RGB")
         label = torch.from_numpy(self.label_list[idx])
 
         rounded_size = (int(round(img.size[0] / self.unit) * self.unit), int(round(img.size[1] / self.unit) * self.unit))
