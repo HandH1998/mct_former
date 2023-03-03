@@ -125,8 +125,10 @@ def generate_attention_maps_ms(data_loader, model, device, args):
 
     # switch to evaluation mode
     model.eval()
-
-    img_list = open(os.path.join(args.img_list, 'train_aug_id.txt')).readlines()
+    if args.data_set == 'COCOMS':
+        img_list = open(os.path.join(args.img_list, 'train_id.txt')).readlines()
+    else:
+        img_list = open(os.path.join(args.img_list, 'train_aug_id.txt')).readlines()
     index = 0
     for image_list, target in metric_logger.log_every(data_loader, 10, header):
     # for iter, (image_list, target) in enumerate(data_loader):

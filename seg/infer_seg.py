@@ -51,6 +51,7 @@ if __name__ == '__main__':
     parser.add_argument("--num_classes", default=21, type=int)
     parser.add_argument("--use_crf", default=False, type=str2bool)
     parser.add_argument("--scales", type=float, nargs='+')
+
     args = parser.parse_args()
 
     gpu_id = args.gpu_id

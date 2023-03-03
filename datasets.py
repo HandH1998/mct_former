@@ -102,10 +102,10 @@ class COCOClsDatasetMS(Dataset):
 
 
 class VOC12Dataset(Dataset):
-    def __init__(self, img_name_list_path, voc12_root, train=True, transform=None, gen_attn=False):
+    def __init__(self, img_name_list_path, voc12_root, label_file_path, train=True, transform=None, gen_attn=False):
         img_name_list_path = os.path.join(img_name_list_path, f'{"train_aug" if train or gen_attn else "val"}_id.txt')
         self.img_name_list = load_img_name_list(img_name_list_path)
-        self.label_list = load_image_label_list_from_npy(self.img_name_list)
+        self.label_list = load_image_label_list_from_npy(self.img_name_list, label_file_path)
         self.voc12_root = voc12_root
         self.transform = transform
 
@@ -123,10 +123,10 @@ class VOC12Dataset(Dataset):
 
 
 class VOC12DatasetMS(Dataset):
-    def __init__(self, img_name_list_path, voc12_root, scales, train=True, transform=None, gen_attn=False, unit=1):
+    def __init__(self, img_name_list_path, voc12_root, label_file_path, scales, train=True, transform=None, gen_attn=False, unit=1):
         img_name_list_path = os.path.join(img_name_list_path, f'{"train_aug" if train or gen_attn else "val"}_id.txt')
         self.img_name_list = load_img_name_list(img_name_list_path)
-        self.label_list = load_image_label_list_from_npy(self.img_name_list)
+        self.label_list = load_image_label_list_from_npy(self.img_name_list, label_file_path)
         self.voc12_root = voc12_root
         self.transform = transform
         self.unit = unit
@@ -166,11 +166,11 @@ def build_dataset(is_train, args, gen_attn=False):
     nb_classes = None
 
     if args.data_set == 'VOC12':
-        dataset = VOC12Dataset(img_name_list_path=args.img_list, voc12_root=args.data_path,
+        dataset = VOC12Dataset(img_name_list_path=args.img_list, voc12_root=args.data_path, label_file_path=args.label_file_path,
                                train=is_train, gen_attn=gen_attn, transform=transform)
         nb_classes = 20
     elif args.data_set == 'VOC12MS':
-        dataset = VOC12DatasetMS(img_name_list_path=args.img_list, voc12_root=args.data_path, scales=tuple(args.scales),
+        dataset = VOC12DatasetMS(img_name_list_path=args.img_list, voc12_root=args.data_path, label_file_path=args.label_file_path, scales=tuple(args.scales),
                                train=is_train, gen_attn=gen_attn, transform=transform)
         nb_classes = 20
     elif args.data_set == 'COCO':

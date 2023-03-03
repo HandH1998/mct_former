@@ -6,52 +6,58 @@ import PIL.Image
 import os.path
 import scipy.misc
 
-IMG_FOLDER_NAME = "JPEGImages"
-ANNOT_FOLDER_NAME = "Annotations"
+# IMG_FOLDER_NAME = "JPEGImages"
+# ANNOT_FOLDER_NAME = "Annotations"
 
-CAT_LIST = ['aeroplane', 'bicycle', 'bird', 'boat',
-        'bottle', 'bus', 'car', 'cat', 'chair',
-        'cow', 'diningtable', 'dog', 'horse',
-        'motorbike', 'person', 'pottedplant',
-        'sheep', 'sofa', 'train',
-        'tvmonitor']
+# CAT_LIST = ['aeroplane', 'bicycle', 'bird', 'boat',
+#         'bottle', 'bus', 'car', 'cat', 'chair',
+#         'cow', 'diningtable', 'dog', 'horse',
+#         'motorbike', 'person', 'pottedplant',
+#         'sheep', 'sofa', 'train',
+#         'tvmonitor']
 
-CAT_NAME_TO_NUM = dict(zip(CAT_LIST,range(len(CAT_LIST))))
+# CAT_NAME_TO_NUM = dict(zip(CAT_LIST,range(len(CAT_LIST))))
 
-def load_image_label_from_xml(img_name, voc12_root):
-    from xml.dom import minidom
+# def load_image_label_from_xml(img_name, voc12_root):
+#     from xml.dom import minidom
 
-    el_list = minidom.parse(os.path.join(voc12_root, ANNOT_FOLDER_NAME,img_name + '.xml')).getElementsByTagName('name')
+#     el_list = minidom.parse(os.path.join(voc12_root, ANNOT_FOLDER_NAME,img_name + '.xml')).getElementsByTagName('name')
 
-    multi_cls_lab = np.zeros((20), np.float32)
+#     multi_cls_lab = np.zeros((20), np.float32)
 
-    for el in el_list:
-        cat_name = el.firstChild.data
-        if cat_name in CAT_LIST:
-            cat_num = CAT_NAME_TO_NUM[cat_name]
-            multi_cls_lab[cat_num] = 1.0
+#     for el in el_list:
+#         cat_name = el.firstChild.data
+#         if cat_name in CAT_LIST:
+#             cat_num = CAT_NAME_TO_NUM[cat_name]
+#             multi_cls_lab[cat_num] = 1.0
 
-    return multi_cls_lab
+#     return multi_cls_lab
 
-def load_image_label_list_from_xml(img_name_list, voc12_root):
+# def load_image_label_list_from_xml(img_name_list, voc12_root):
 
-    return [load_image_label_from_xml(img_name, voc12_root) for img_name in img_name_list]
+#     return [load_image_label_from_xml(img_name, voc12_root) for img_name in img_name_list]
 
-def load_image_label_list_from_npy(img_name_list):
+# def load_image_label_list_from_npy(img_name_list):
 
-    cls_labels_dict = np.load('voc12/cls_labels.npy').item()
+#     cls_labels_dict = np.load('voc12/cls_labels.npy').item()
 
-    return [cls_labels_dict[img_name] for img_name in img_name_list]
+#     return [cls_labels_dict[img_name] for img_name in img_name_list]
 
-def get_img_path(img_name, voc12_root):
-    return os.path.join(voc12_root, IMG_FOLDER_NAME, img_name + '.jpg')
+# def get_img_path(img_name, voc12_root):
+#     return os.path.join(voc12_root, IMG_FOLDER_NAME, img_name + '.jpg')
 
 def load_img_name_list(dataset_path):
 
-    img_gt_name_list = open(dataset_path).read().splitlines()
-    img_name_list = [img_gt_name.split(' ')[0][-15:-4] for img_gt_name in img_gt_name_list]
+    img_gt_name_list = open(dataset_path).readlines()
+    img_name_list = [img_gt_name.strip() for img_gt_name in img_gt_name_list]
 
     return img_name_list
+# def load_img_name_list(dataset_path):
+
+#     img_gt_name_list = open(dataset_path).read().splitlines()
+#     img_name_list = [img_gt_name.split(' ')[0][-15:-4] for img_gt_name in img_gt_name_list]
+
+#     return img_name_list
 
 class VOC12ImageDataset(Dataset):
 
@@ -60,64 +66,63 @@ class VOC12ImageDataset(Dataset):
         self.voc12_root = voc12_root
         self.transform = transform
 
+
     def __len__(self):
         return len(self.img_name_list)
-
+    
     def __getitem__(self, idx):
         name = self.img_name_list[idx]
-
-        img = PIL.Image.open(get_img_path(name, self.voc12_root)).convert("RGB")
-
+        img = PIL.Image.open(os.path.join(self.voc12_root, 'JPEGImages', name + '.jpg')).convert("RGB")
         if self.transform:
             img = self.transform(img)
 
         return name, img
 
 
-class VOC12ClsDataset(VOC12ImageDataset):
+# class VOC12ClsDataset(VOC12ImageDataset):
 
-    def __init__(self, img_name_list_path, voc12_root, transform=None):
-        super().__init__(img_name_list_path, voc12_root, transform)
-        self.label_list = load_image_label_list_from_npy(self.img_name_list)
+    # def __init__(self, img_name_list_path, voc12_root, transform=None):
+    #     super().__init__(img_name_list_path, voc12_root, transform)
+    #     self.label_list = load_image_label_list_from_npy(self.img_name_list)
 
-    def __getitem__(self, idx):
-        name, img = super().__getitem__(idx)
+    # def __getitem__(self, idx):
+    #     name, img = super().__getitem__(idx)
 
-        label = torch.from_numpy(self.label_list[idx])
+    #     label = torch.from_numpy(self.label_list[idx])
 
-        return name, img, label
+    #     return name, img, label
 
 
-class VOC12ClsDatasetMSF(VOC12ClsDataset):
+# class VOC12ClsDatasetMSF(VOC12ClsDataset):
 
-    def __init__(self, img_name_list_path, voc12_root, scales, inter_transform=None, unit=1):
-        super().__init__(img_name_list_path, voc12_root, transform=None)
-        self.scales = scales
-        self.unit = unit
-        self.inter_transform = inter_transform
+#     def __init__(self, img_name_list_path, voc12_root, scales, inter_transform=None, unit=1):
+#         super().__init__(img_name_list_path, voc12_root, transform=None)
+#         self.scales = scales
+#         self.unit = unit
+#         self.inter_transform = inter_transform
 
-    def __getitem__(self, idx):
-        name, img, label = super().__getitem__(idx)
+#     def __getitem__(self, idx):
+#         name, img, label = super().__getitem__(idx)
 
-        rounded_size = (int(round(img.size[0]/self.unit)*self.unit), int(round(img.size[1]/self.unit)*self.unit))
+#         rounded_size = (int(round(img.size[0]/self.unit)*self.unit), int(round(img.size[1]/self.unit)*self.unit))
 
-        ms_img_list = []
-        for s in self.scales:
-            target_size = (round(rounded_size[0]*s),
-                           round(rounded_size[1]*s))
-            s_img = img.resize(target_size, resample=PIL.Image.CUBIC)
-            ms_img_list.append(s_img)
+        # ms_img_list = []
+        # for s in self.scales:
+        #     target_size = (round(rounded_size[0]*s),
+        #                    round(rounded_size[1]*s))
+        #     s_img = img.resize(target_size, resample=PIL.Image.CUBIC)
+        #     ms_img_list.append(s_img)
 
-        if self.inter_transform:
-            for i in range(len(ms_img_list)):
-                ms_img_list[i] = self.inter_transform(ms_img_list[i])
+        # if self.inter_transform:
+        #     for i in range(len(ms_img_list)):
+        #         ms_img_list[i] = self.inter_transform(ms_img_list[i])
 
-        msf_img_list = []
-        for i in range(len(ms_img_list)):
-            msf_img_list.append(ms_img_list[i])
-            msf_img_list.append(np.flip(ms_img_list[i], -1).copy())
+        # msf_img_list = []
+        # for i in range(len(ms_img_list)):
+        #     msf_img_list.append(ms_img_list[i])
+        #     msf_img_list.append(np.flip(ms_img_list[i], -1).copy())
 
-        return name, msf_img_list, label
+        # return name, msf_img_list, label
 
 
 class ExtractAffinityLabelInRadius():
@@ -232,45 +237,45 @@ class VOC12AffDataset(VOC12ImageDataset):
         return img, label
 
 
-class VOC12AffGtDataset(VOC12ImageDataset):
+# class VOC12AffGtDataset(VOC12ImageDataset):
 
-    def __init__(self, img_name_list_path, label_dir, cropsize, voc12_root, radius=5,
-                 joint_transform_list=None, img_transform_list=None, label_transform_list=None):
-        super().__init__(img_name_list_path, voc12_root, transform=None)
+#     def __init__(self, img_name_list_path, label_dir, cropsize, voc12_root, radius=5,
+#                  joint_transform_list=None, img_transform_list=None, label_transform_list=None):
+#         super().__init__(img_name_list_path, voc12_root, transform=None)
 
-        self.label_dir = label_dir
-        self.voc12_root = voc12_root
+#         self.label_dir = label_dir
+#         self.voc12_root = voc12_root
 
-        self.joint_transform_list = joint_transform_list
-        self.img_transform_list = img_transform_list
-        self.label_transform_list = label_transform_list
+#         self.joint_transform_list = joint_transform_list
+#         self.img_transform_list = img_transform_list
+#         self.label_transform_list = label_transform_list
 
-        self.extract_aff_lab_func = ExtractAffinityLabelInRadius(cropsize=cropsize//8, radius=radius)
+#         self.extract_aff_lab_func = ExtractAffinityLabelInRadius(cropsize=cropsize//8, radius=radius)
 
-    def __len__(self):
-        return len(self.img_name_list)
+#     def __len__(self):
+#         return len(self.img_name_list)
 
-    def __getitem__(self, idx):
-        name, img = super().__getitem__(idx)
+#     def __getitem__(self, idx):
+#         name, img = super().__getitem__(idx)
 
-        label_path = os.path.join(self.label_dir, name + '.png')
+#         label_path = os.path.join(self.label_dir, name + '.png')
 
-        label = scipy.misc.imread(label_path)
+#         label = scipy.misc.imread(label_path)
 
-        for joint_transform, img_transform, label_transform \
-                in zip(self.joint_transform_list, self.img_transform_list, self.label_transform_list):
+#         for joint_transform, img_transform, label_transform \
+#                 in zip(self.joint_transform_list, self.img_transform_list, self.label_transform_list):
 
-            if joint_transform:
-                img_label = np.concatenate((img, label), axis=-1)
-                img_label = joint_transform(img_label)
-                img = img_label[..., :3]
-                label = img_label[..., 3:]
+#             if joint_transform:
+#                 img_label = np.concatenate((img, label), axis=-1)
+#                 img_label = joint_transform(img_label)
+#                 img = img_label[..., :3]
+#                 label = img_label[..., 3:]
 
-            if img_transform:
-                img = img_transform(img)
-            if label_transform:
-                label = label_transform(label)
+#             if img_transform:
+#                 img = img_transform(img)
+#             if label_transform:
+#                 label = label_transform(label)
 
-        label = self.extract_aff_lab_func(label)
+#         label = self.extract_aff_lab_func(label)
 
-        return img, label
+#         return img, label

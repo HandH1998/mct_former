@@ -26,11 +26,12 @@ if __name__ == '__main__':
     parser.add_argument("--crop_size", default=448, type=int)
     parser.add_argument("--weights", required=True, type=str)
     parser.add_argument("--voc12_root", required=True, type=str)
+    parser.add_argument("--save_path", default="./", type=str)
     parser.add_argument("--la_crf_dir", required=True, type=str)
     parser.add_argument("--ha_crf_dir", required=True, type=str)
     args = parser.parse_args()
 
-    pyutils.Logger(args.session_name + '.log')
+    pyutils.Logger(args.save_path + args.session_name + '.log')
 
     print(vars(args))
 
@@ -135,4 +136,4 @@ if __name__ == '__main__':
             print('')
             timer.reset_stage()
 
-    torch.save(model.module.state_dict(), args.session_name + '.pth')
+    torch.save(model.module.state_dict(), args.save_path + args.session_name + '.pth')

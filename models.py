@@ -17,6 +17,7 @@ class MCTformerV2(VisionTransformer):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.head = nn.Conv2d(self.embed_dim, self.num_classes, kernel_size=3, stride=1, padding=1)
+        
         self.avgpool = nn.AdaptiveAvgPool2d(1)
         self.head.apply(self._init_weights)
         num_patches = self.patch_embed.num_patches
@@ -63,7 +64,7 @@ class MCTformerV2(VisionTransformer):
         for i, blk in enumerate(self.blocks):
             x, weights_i = blk(x)
             attn_weights.append(weights_i)
-
+        # 少了个self.norm(x)
         return x[:, 0:self.num_classes], x[:, self.num_classes:], attn_weights
 
     def forward(self, x, return_att=False, n_layers=12, attention_type='fused'):

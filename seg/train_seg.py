@@ -31,7 +31,7 @@ if __name__ == '__main__':
     parser.add_argument("--wt_dec", default=1e-5, type=float)
     parser.add_argument("--init_weights", default='', type=str)
 
-    parser.add_argument("--session_name", default="model_", type=str)
+    parser.add_argument("--session_name", default="resnet38_seg", type=str)
     parser.add_argument("--crop_size", default=321, type=int)
 
     parser.add_argument('--print_intervals', type=int, default=50)
@@ -107,4 +107,4 @@ if __name__ == '__main__':
                       'Fin:%s' % (timer.str_est_finish()),
                       'lr: %.5f' % (optimizer.param_groups[0]['lr']), flush=True)
 
-        torch.save(model.module.state_dict(), os.path.join(save_path, args.session_name + str(ep) + '.pth'))
+        torch.save(model.module.state_dict(), os.path.join(save_path, args.session_name + '.pth'))

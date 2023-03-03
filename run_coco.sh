@@ -6,7 +6,7 @@ python main.py --model deit_small_MCTformerV2_patch16_224 \
                 --data-path /Datasets/MSCOCO \
                 --layer-index 12 \
                 --output_dir /MCTformer_results/MCTformer_v2/coco \
-                --label-file-path COCO_cls_label.npy \
+                --label-file-path  \
                 --finetune https://dl.fbaipublicfiles.com/deit/deit_small_patch16_224-cd65a155.pth
 
 ######### Generating class-specific localization maps ##########
