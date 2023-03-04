@@ -1,5 +1,6 @@
 git clone https://github.com/HandH1998/mct_former.git
 cd mct_former
+pip install -r requirements.txt
 mkdir datasets
 cd datasets
 
