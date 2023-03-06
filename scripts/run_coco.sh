@@ -26,13 +26,13 @@ python3 main.py --model deit_small_MCTformerV2_patch16_224 \
     --out-crf results/coco/MCTformer_v2/attn-patchrefine-npy-crf
 
 # evaluate the generated class-specific localization maps on train set
-python3 evaluation.py --list datasets/coco/train_id.txt \
-    --gt_dir datasets/coco/SegmentationClass \
-    --logfile results/coco/MCTformer_v2/attn-patchrefine-npy/eval_log_train.txt \
-    --type npy \
-    --curve True \
-    --predict_dir results/coco/MCTformer_v2/attn-patchrefine-npy \
-    --comment "coco_train_82081"
+# python3 evaluation.py --list datasets/coco/train_id.txt \
+#     --gt_dir datasets/coco/SegmentationClass \
+#     --logfile results/coco/MCTformer_v2/attn-patchrefine-npy/eval_log_train.txt \
+#     --type npy \
+#     --curve True \
+#     --predict_dir results/coco/MCTformer_v2/attn-patchrefine-npy \
+#     --comment "coco_train_82081"
 
 # train AffinityNet on train set
 python3 psa/train_aff.py --weights models/res38/res38_cls.pth \
@@ -50,12 +50,12 @@ python3 psa/infer_aff.py --weights models/coco/MCTformer_v2/aff/resnet38_aff.pth
     --out_rw results/coco/MCTformer_v2/pgt-psa-rw 
 
 # evaluate the final pseudo pixel labels on train set
-python3 evaluation.py --list datasets/coco/train_id.txt \
-    --gt_dir datasets/coco/SegmentationClass \
-    --logfile results/coco/MCTformer_v2/pgt-psa-rw/eval_log_train.txt \
-    --type png \
-    --predict_dir results/coco/MCTformer_v2/pgt-psa-rw \
-    --comment "coco_train_82081"
+# python3 evaluation.py --list datasets/coco/train_id.txt \
+#     --gt_dir datasets/coco/SegmentationClass \
+#     --logfile results/coco/MCTformer_v2/pgt-psa-rw/eval_log_train.txt \
+#     --type png \
+#     --predict_dir results/coco/MCTformer_v2/pgt-psa-rw \
+#     --comment "coco_train_82081"
 
 # train seg network on aug train set
 python3 seg/train_seg.py --network resnet38_seg \
